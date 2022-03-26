@@ -6,9 +6,9 @@ import { useEffect } from "react";
 
 export const withAuthNavigate = (Component) => {
     const NavigateComponent = (props) => {
-        const navigate = useNavigate();
         
         useEffect(() => {
+            const navigate = useNavigate();
             if (!props.isAuth) navigate("/login") 
         }, [props.isAuth])
 
