@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 
 export const withAuthNavigate = (Component) => {
