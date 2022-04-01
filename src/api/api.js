@@ -2,17 +2,15 @@ import * as axios from "axios";
 
 export const instance = axios.create({
     baseURL: 'https://api.englishpatient.org/',
-    headers: {
-        /*'Authorization': 'r:07bfdebdb258f642bd6581b3d93c5d84',*/
-    }
+    headers: {}
 });
 
 export const authAPI = {
-    me() {
-        return instance.get(`users/me`);
+    async me() {
+        return await instance.get(`users/me`);
     },
 
-    login(email, password) {
-        return instance.post(`login`, { email, password })
+    async login(email, password) {
+        return await instance.post(`login`, { email, password })
     },
 }

@@ -1,40 +1,49 @@
 import styled from "styled-components";
 import { FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { withAuthNavigate } from "../hoc/withAuthNavigate";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/auth-reducer";
 import { useState } from "react";
+import font from "../utils/font/font.css";
+import * as selectors from "../redux/selectors";
+import { Navigate } from "react-router-dom";
 
 const Profile = (props) => {
     const [disable, setDisable] = useState(false);
+    const {email, phone, avatar, firstName, lastName, city, country} = useSelector(selectors.users);
+    const isAuth = useSelector(selectors.isAuth);
+
+    const dispatch = useDispatch(); 
+
+    if (!isAuth) {
+        return <Navigate to="/login"/> 
+    }
 
     return (
         <div> 
             <FormWrapper>
                 <div>
-                    <Img src={props.avatar}/>
+                    <Img src={avatar}/>
                 </div>
                 <Name>
-                    {props.firstName}
+                    {firstName}
                     <br/>
-                    {props.lastName}
+                    {lastName}
                     <br/>
                     <br/>
-                    {props.country}, {props.city}
+                    {country}, {city}
                 </Name>
                 <Info>
                     <div>Info</div>
                     <Contacts>
                         <div>
-                            <Contact><FaPhoneAlt/> {props.phone}</Contact>
+                            <Contact><FaPhoneAlt/> {phone}</Contact>
                         </div>
                         <div>
-                            <Contact><FaEnvelope/> {props.email}</Contact>
+                            <Contact><FaEnvelope/> {email}</Contact>
                         </div>
                     </Contacts>
                     <WrapBtn> 
-                        <Button onClick={() => { setDisable(true); props.logout(); } } disabled={disable}>Log Out</Button>
+                        <Button onClick={() => { setDisable(true); dispatch(logout()); }} disabled={disable}>Log Out</Button>
                     </WrapBtn>
                 </Info>
             </FormWrapper>
@@ -42,23 +51,9 @@ const Profile = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
-    email: state.auth.email,
-    phone: state.auth.phone, 
-    avatar: state.auth.avatar,
-    firstName: state.auth.firstName, 
-    lastName: state.auth.lastName, 
-    city: state.auth.city, 
-    country: state.auth.country,
-    isAuth: state.auth.isAuth,
-    isFetching: state.auth.isFetching, 
-    isDisabled: state.auth.isDisabled
-})
-
-export default compose(connect(mapStateToProps, {logout}), withAuthNavigate)(Profile);
+export default (Profile);
 
 const FormWrapper = styled.div`
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
     font-family: 'Montserrat', sans-serif;
 
     display: grid;

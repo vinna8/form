@@ -1,12 +1,21 @@
 import React from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { login } from "../redux/auth-reducer";
 import { Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Preloader from "../utils/preloader/preloader";
+import font from "../utils/font/font.css";
+import * as selectors from "../redux/selectors";
 
 const Form = (props) => {
+    const isAuth = useSelector(selectors.isAuth);
+    const isFetching = useSelector(selectors.isFetching);
+    const isDisabled = useSelector(selectors.isDisabled);
+    const message = useSelector(selectors.message); 
+
+    const dispatch = useDispatch();
+
     const { 
         register, 
         formState: {errors, isValid}, 
@@ -15,17 +24,17 @@ const Form = (props) => {
         });
 
     const onSubmit = (data) => {
-        props.login(data.email, data.password)
+        dispatch(login(data.email, data.password));
     }
 
-    if (props.isAuth) {
+    if (isAuth) {
         return <Navigate to="/profile"/>
     }
 
     return (
         <div>
             <FormWrapper> 
-                {props.isFetching ? <Preloader /> :
+                {isFetching ? <Preloader /> :
                     <ContentForm onSubmit={handleSubmit(onSubmit)}> 
                         <Title>LOGIN</Title>
                         <div>
@@ -34,7 +43,7 @@ const Form = (props) => {
                                 pattern: {
                                     value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
                                     message: 'Please enter a valid email.'
-                                }
+                                },
                             })} 
                             placeholder='Email' />
                         </div>
@@ -56,11 +65,11 @@ const Form = (props) => {
                         </div>
 
                         <div>
-                            {props.message && <Error>{props.message}</Error>}
+                            {message && <Error>{message}</Error>}
                         </div>
 
                         <div>
-                            <Button type='submit' disabled={!isValid || props.isDisabled}>Log In</Button>
+                            <Button type='submit' disabled={!isValid || isDisabled}>Log In</Button>
                         </div>
                     </ContentForm>
                 }
@@ -69,17 +78,9 @@ const Form = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
-    isAuth: state.auth.isAuth,
-    isFetching: state.auth.isFetching,
-    isDisabled: state.auth.isDisabled,
-    message: state.auth.message
-})
-
-export default connect(mapStateToProps, {login})(Form);
+export default Form;
 
 const FormWrapper = styled.div`
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
     font-family: 'Montserrat', sans-serif;
 
     margin: auto;
